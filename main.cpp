@@ -125,19 +125,43 @@ int OUT(int i, int j, int k) { //判斷牌型
 }
 
 void SHOWDOWN(int array[],int score, int score2) { //判斷勝負
-	if (score > score2) {
+
+	int number1=0, number2=0;
+	for (int i = 0; i < 5; i++)
+		for (int j = i + 1; j < 5; j++)
+			if ((array[i] - array[j]) % 13 == 0)
+				number1 = array[i];
+
+	for (int i = 5; i < 10; i++)
+		for (int j = i + 1; j < 10; j++)
+			if ((array[i] - array[j]) % 13 == 0)
+				number2 = array[i];
+
+	if (score > score2) { //比牌型
 		cout << "玩家一獲勝" << endl << endl;
 	}
 	else if (score < score2) {
 		cout << "玩家二獲勝" << endl << endl;
 	}
-	else if (array[0] % 13 > array[5] % 13){
+	else if (number1 % 13 > number2 % 13) { //比對子數字
+		cout << "玩家一獲勝" << endl << endl;
+	}
+	else if (number1 % 13 < number2 % 13) {
+		cout << "玩家二獲勝" << endl << endl;
+	}
+	else if (number1 / 13 > number2 / 13) { //比對子花色
+		cout << "玩家一獲勝" << endl << endl;
+	}
+	else if (number1 / 13 < number2 / 13) {
+		cout << "玩家二獲勝" << endl << endl;
+	}
+	else if (array[0] % 13 > array[5] % 13){ //比單張數字
 		cout << "玩家一獲勝" << endl << endl;
 	}
 	else if (array[0] % 13 < array[5] % 13) {
 		cout << "玩家二獲勝" << endl << endl;
 	}
-	else if (array[0] / 13 > array[5] / 13) {
+	else if (array[0] / 13 > array[5] / 13) { //比單張花色
 		cout << "玩家一獲勝" << endl << endl;
 	}
 	else if (array[0] / 13 < array[5] / 13) {
