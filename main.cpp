@@ -26,7 +26,7 @@ int main()
 	for (int i = 0; i < 52; i++) {
 		poker[i] = i;
 	}
-	
+
 	SHUFFLE(poker);
 	DEAL(poker, 0, 5);
 	DEAL(poker, 5, 10);
@@ -39,22 +39,62 @@ int main()
 
 	int flush = 1 - FLUSH(poker, 0, 5);
 	int flush2 = 1 - FLUSH(poker, 5, 10);
-	
+
 	int score = OUT(pair, flush, straight);
 	int score2 = OUT(pair2, flush2, straight2);
 
-	cout << "參賽者一的牌為" << endl;
+	for (int t = 0; t < 5; t++) { //回合發牌+下注系統
+		cout << "你的牌為:" << endl << "{ ";
+		for (int ti = 0; ti < t+1; ti++) {
+			cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
+		}
+		cout << "}" << endl;
+		cout << "對手的牌為:" << endl << "{ " << "底牌" << "   ";
+		for (int ti = 6; ti < t + 6; ti++) {
+			cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
+		}
+		cout << "}" << endl << endl;
+		if (t >= 1) {
+			if (poker[t] % 13 > poker[t + 5] % 13) {
+				cout << "你獲得下注權! 請決定下注金額為: " << endl << endl;
+			}
+			else if (poker[t] % 13 < poker[t + 5] % 13) {
+				cout << "對手獲得下注權! 對手決定下注金額為: " << endl << endl;
+			}
+			else if (poker[t] / 13 > poker[t + 5] / 13) {
+				cout << "你獲得下注權! 請決定下注金額為: " << endl << endl;
+			}
+			else if (poker[t] / 13 < poker[t + 5] / 13) {
+				cout << "對手獲得下注權!對手決定下注金額為: " << endl << endl;
+			}
+			else {
+				cout << "出bug了!" << endl << endl;
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+	cout << "你的牌為:" << endl << "{ "; //最終結果
 	for (int i = 0; i < 5; i++) {
 		cout << suit[poker[i] / 13] << number[poker[i] % 13] << " ";
 	}
-	cout << endl << "牌型為" << out[score] << endl << endl;
+	cout << "}" << endl << "牌型為" << out[score] << endl << endl;
 
 
-	cout << "參賽者二的牌為" << endl;
+	cout << "對手的牌為:" << endl << "{ ";
 	for (int i = 5; i < 10; i++) {
 		cout << suit[poker[i] / 13] << number[poker[i] % 13] << " ";
 	}
-	cout << endl << "牌型為" << out[score2] << endl << endl;
+	cout << "}" << endl << "牌型為" << out[score2] << endl << endl;
 
 	SHOWDOWN(poker,score, score2);
 
@@ -64,7 +104,7 @@ int main()
 
 /******************************************************************************/
 
-void SHUFFLE(int array[]) {
+void SHUFFLE(int array[]) { //洗牌
 	for (int i = 0; i < 52; i++) {
 		int j = rand() % 52; //將取出的亂數當成索引, 做換值的動作
 		int tmp = array[i];
@@ -138,34 +178,34 @@ void SHOWDOWN(int array[],int score, int score2) { //判斷勝負
 				number2 = array[i];
 
 	if (score > score2) { //比牌型
-		cout << "玩家一獲勝" << endl << endl;
+		cout << "你獲勝了!" << endl << endl;
 	}
 	else if (score < score2) {
-		cout << "玩家二獲勝" << endl << endl;
+		cout << "對手獲勝!" << endl << endl;
 	}
 	else if (number1 % 13 > number2 % 13) { //比對子數字
-		cout << "玩家一獲勝" << endl << endl;
+		cout << "你獲勝了!" << endl << endl;
 	}
 	else if (number1 % 13 < number2 % 13) {
-		cout << "玩家二獲勝" << endl << endl;
+		cout << "對手獲勝!" << endl << endl;
 	}
 	else if (number1 / 13 > number2 / 13) { //比對子花色
-		cout << "玩家一獲勝" << endl << endl;
+		cout << "你獲勝了!" << endl << endl;
 	}
 	else if (number1 / 13 < number2 / 13) {
-		cout << "玩家二獲勝" << endl << endl;
+		cout << "對手獲勝!" << endl << endl;
 	}
 	else if (array[0] % 13 > array[5] % 13){ //比單張數字
-		cout << "玩家一獲勝" << endl << endl;
+		cout << "你獲勝了!" << endl << endl;
 	}
 	else if (array[0] % 13 < array[5] % 13) {
-		cout << "玩家二獲勝" << endl << endl;
+		cout << "對手獲勝!" << endl << endl;
 	}
 	else if (array[0] / 13 > array[5] / 13) { //比單張花色
-		cout << "玩家一獲勝" << endl << endl;
+		cout << "你獲勝了!" << endl << endl;
 	}
 	else if (array[0] / 13 < array[5] / 13) {
-		cout << "玩家二獲勝" << endl << endl;
+		cout << "對手獲勝!" << endl << endl;
 	}
 	else {
 		cout << "出bug了!" << endl;
