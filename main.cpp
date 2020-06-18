@@ -11,10 +11,11 @@ int PAIR(int array[], int low, int high);
 int FLUSH(int array[], int low, int high);
 int STRAIGHT(int array[], int low, int high);
 int OUT(int i, int j, int k);
-void SHOWDOWN(int array[],int score, int score2);
+void SHOWDOWN(int array[], int score, int score2);
 
 int main()
 {
+	int command = 0;
 	int poker[52];
 	char suit[4][5] = { "梅花", "方塊", "紅心", "黑桃" };
 	char number[13][3] = { "２","３","４","５","６","７","８","９","10","Ｊ","Ｑ","Ｋ","Ａ" };
@@ -44,32 +45,40 @@ int main()
 	int score2 = OUT(pair2, flush2, straight2);
 
 	for (int t = 0; t < 5; t++) { //回合發牌+下注系統
-		cout << "你的牌為:" << endl << "{ ";
-		for (int ti = 0; ti < t+1; ti++) {
-			cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
+		cout << "若你準備好了，請輸入1進行發牌。讓你想放棄賭局，請輸入-1。" << endl;
+		cin >> command;
+		if (command != -1) {
+			cout << "你的牌為:" << endl << "{ ";
+			for (int ti = 0; ti < t + 1; ti++) {
+				cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
+			}
+			cout << "}" << endl;
+			cout << "對手的牌為:" << endl << "{ " << "底牌" << "   ";
+			for (int ti = 6; ti < t + 6; ti++) {
+				cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
+			}
+			cout << "}" << endl << endl;
+			if (t >= 1) {
+				if (poker[t] % 13 > poker[t + 5] % 13) {
+					cout << "你獲得下注權! 請決定下注金額為: " << endl << endl;
+				}
+				else if (poker[t] % 13 < poker[t + 5] % 13) {
+					cout << "對手獲得下注權! 對手決定下注金額為: " << endl << endl;
+				}
+				else if (poker[t] / 13 > poker[t + 5] / 13) {
+					cout << "你獲得下注權! 請決定下注金額為: " << endl << endl;
+				}
+				else if (poker[t] / 13 < poker[t + 5] / 13) {
+					cout << "對手獲得下注權!對手決定下注金額為: " << endl << endl;
+				}
+				else {
+					cout << "出bug了!" << endl << endl;
+				}
+			}
 		}
-		cout << "}" << endl;
-		cout << "對手的牌為:" << endl << "{ " << "底牌" << "   ";
-		for (int ti = 6; ti < t + 6; ti++) {
-			cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
-		}
-		cout << "}" << endl << endl;
-		if (t >= 1) {
-			if (poker[t] % 13 > poker[t + 5] % 13) {
-				cout << "你獲得下注權! 請決定下注金額為: " << endl << endl;
-			}
-			else if (poker[t] % 13 < poker[t + 5] % 13) {
-				cout << "對手獲得下注權! 對手決定下注金額為: " << endl << endl;
-			}
-			else if (poker[t] / 13 > poker[t + 5] / 13) {
-				cout << "你獲得下注權! 請決定下注金額為: " << endl << endl;
-			}
-			else if (poker[t] / 13 < poker[t + 5] / 13) {
-				cout << "對手獲得下注權!對手決定下注金額為: " << endl << endl;
-			}
-			else {
-				cout << "出bug了!" << endl << endl;
-			}
+		else {
+			cout << "你放棄了賭局!" << endl << endl;
+			break;
 		}
 	}
 
@@ -96,7 +105,7 @@ int main()
 	}
 	cout << "}" << endl << "牌型為" << out[score2] << endl << endl;
 
-	SHOWDOWN(poker,score, score2);
+	SHOWDOWN(poker, score, score2);
 
 	system("PAUSE");
 	return 0;
@@ -133,14 +142,14 @@ int PAIR(int array[], int low, int high) { //判斷有幾對牌的點數一樣
 
 int FLUSH(int array[], int low, int high) {
 	int F = 0;
-	for (int i = low; i < high-1; i++) F = abs(array[i] / 13 - array[i + 1] / 13) + F;
+	for (int i = low; i < high - 1; i++) F = abs(array[i] / 13 - array[i + 1] / 13) + F;
 	if (F > 0) F = 1; //F = 0 表示同花, F = 1 表示非同花
 	return(F);
 }
 
 int STRAIGHT(int array[], int low, int high) { //判斷順子
 	int S = 1;
-	for (int i = low+1; i < high-1; i++) S = (array[i] % 13 - array[i + 1] % 13) * S;
+	for (int i = low + 1; i < high - 1; i++) S = (array[i] % 13 - array[i + 1] % 13) * S;
 	if (S == 1 && (array[0] % 13 - array[1] % 13 == 1 || array[0] % 13 - array[1] % 13 == 9)) S = 1;
 	else S = 0;//若 S = 1, 表示順子
 	return(S);
@@ -149,24 +158,24 @@ int STRAIGHT(int array[], int low, int high) { //判斷順子
 int OUT(int i, int j, int k) { //判斷牌型
 	int o;
 	switch (i) {
-		case 1:
-		case 2:
-		case 3: o = i; break;
-		case 4: o = 6; break;
-		case 6: o = 7; break;
+	case 1:
+	case 2:
+	case 3: o = i; break;
+	case 4: o = 6; break;
+	case 6: o = 7; break;
 	default: switch (10 * j + k) {
-		case 11: o = 8; break;
-		case 1: o = 4; break;
-		case 10: o = 5; break;
-		default: o = 0;
+	case 11: o = 8; break;
+	case 1: o = 4; break;
+	case 10: o = 5; break;
+	default: o = 0;
 	}
 	}
 	return o;
 }
 
-void SHOWDOWN(int array[],int score, int score2) { //判斷勝負
+void SHOWDOWN(int array[], int score, int score2) { //判斷勝負
 
-	int number1=0, number2=0;
+	int number1 = 0, number2 = 0;
 	for (int i = 0; i < 5; i++)
 		for (int j = i + 1; j < 5; j++)
 			if ((array[i] - array[j]) % 13 == 0)
@@ -195,7 +204,7 @@ void SHOWDOWN(int array[],int score, int score2) { //判斷勝負
 	else if (number1 / 13 < number2 / 13) {
 		cout << "對手獲勝!" << endl << endl;
 	}
-	else if (array[0] % 13 > array[5] % 13){ //比單張數字
+	else if (array[0] % 13 > array[5] % 13) { //比單張數字
 		cout << "你獲勝了!" << endl << endl;
 	}
 	else if (array[0] % 13 < array[5] % 13) {
