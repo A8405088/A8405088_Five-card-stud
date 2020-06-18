@@ -11,18 +11,29 @@ int PAIR(int array[], int low, int high);
 int FLUSH(int array[], int low, int high);
 int STRAIGHT(int array[], int low, int high);
 int OUT(int i, int j, int k);
-void SHOWDOWN(int array[], int score, int score2);
+int SHOWDOWN(int array[], int score, int score2);
 
 int main()
 {
+	srand((unsigned)time(NULL));
+
+	int mymoney = 10000;
+	int hemoney = 10000;
+	int sumbet = 0;
+	int mybet = 0;
+	int hebet = 0;
+	int deepbet = 500;
+
+	int end = 1;
+	int end2 = 1;
+	int end3 = 1;
+	int vord = 0;
 	int command = 0;
 	int poker[52];
 	char suit[4][5] = { "梅花", "方塊", "紅心", "黑桃" };
 	char number[13][3] = { "２","３","４","５","６","７","８","９","10","Ｊ","Ｑ","Ｋ","Ａ" };
 	char out[9][7] = { "雜牌","一對","兩對","三條","順子","同花","葫蘆","鐵枝","同花順" };
 	char out2[9][7] = { "雜牌","一對","兩對","三條","順子","同花","葫蘆","鐵枝","同花順" };
-
-	srand((unsigned)time(NULL));
 
 	for (int i = 0; i < 52; i++) {
 		poker[i] = i;
@@ -44,69 +55,236 @@ int main()
 	int score = OUT(pair, flush, straight);
 	int score2 = OUT(pair2, flush2, straight2);
 
-	for (int t = 0; t < 5; t++) { //回合發牌+下注系統
-		cout << "若你準備好了，請輸入1進行發牌。讓你想放棄賭局，請輸入-1。" << endl;
-		cin >> command;
-		if (command != -1) {
-			cout << "你的牌為:" << endl << "{ ";
-			for (int ti = 0; ti < t + 1; ti++) {
-				cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
+	cout << "遊戲底注已預設為500，下注請輸入500,1000,2000其中一個值" << endl << endl;
+
+	while (end == 1) { //回合發牌+下注系統
+		for (int t = 0; t < 5; t++) {
+			cout << "若你準備好了，請輸入1進行發牌。讓你想放棄賭局，請輸入-1。";
+			cin >> command;
+			cout << endl;
+			if (command != -1 && mybet != -1) {
+				mybet = 0;
+				hebet = 0;
+				cout << "你的牌為:" << endl << "{ ";
+				for (int ti = 0; ti < t + 1; ti++) {
+					cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
+				}
+				cout << "}" << endl;
+				cout << "對手的牌為:" << endl << "{ " << "底牌" << "   ";
+				for (int ti = 6; ti < t + 6; ti++) {
+					cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
+				}
+				cout << "}" << endl << endl;
+				if (t >= 1) {
+					if (poker[t] % 13 > poker[t + 5] % 13) {
+						while (end3 == 1) {
+							cout << "你獲得下注權! 請決定下注金額為: ";
+							cin >> mybet;
+							switch (mybet) {
+								case 2000:
+									end3 = 0;
+									break;
+								case 1000:
+									end3 = 0;
+									break;
+								case 500:
+									end3 = 0;
+									break;
+								default:
+									cout << endl << "請輸入0,500,1000,2000的金額!" << endl;
+									break;
+							}
+						}
+						end3 = 1;
+						mymoney -= mybet;
+						while (end3 == 1 || mybet > hebet) {
+							hebet = rand() % 5;
+							switch (hebet) {
+							case 4:
+								end3 = 0;
+								break;
+							case 2:
+								end3 = 0;
+								break;
+							case 1:
+								end3 = 0;
+								break;
+							default:
+								break;
+							}
+							hebet *= 500;
+						}
+						end3 = 1;
+						hemoney -= hebet;
+						sumbet += mybet + hebet;
+						cout << endl << "對手跟注: " << hebet << endl;
+					}
+					else if (poker[t] % 13 < poker[t + 5] % 13) {
+						while (end3 == 1 || mybet > hebet) {
+							cout << "對手獲得下注權! 對手決定下注金額為: ";
+							hebet = rand() % 5;
+							switch (hebet) {
+							case 4:
+								end3 = 0;
+								break;
+							case 2:
+								end3 = 0;
+								break;
+							case 1:
+								end3 = 0;
+								break;
+							default:
+								break;
+							}
+							hebet *= 500;
+						}
+						end3 = 1;
+						hemoney -= hebet;
+						cout << hebet << endl;
+						while (mybet < hebet) {
+							cout << "請決定是否跟注(若想放棄賭局，請輸入-1)，你決定跟注: ";
+							cin >> mybet;
+							if (mybet == -1) {
+								break;
+							}
+							else if (mybet < hebet) {
+								cout << endl << "跟注金額不可低於對手下注金額!";
+							}
+						}
+						mymoney -= mybet;
+						sumbet += hebet + mybet;
+						cout << endl;
+					}
+					else if (poker[t] / 13 > poker[t + 5] / 13) {
+						while (end3 == 1) {
+							cout << "你獲得下注權! 請決定下注金額為: ";
+							cin >> mybet;
+							switch (mybet) {
+							case 2000:
+								end3 = 0;
+								break;
+							case 1000:
+								end3 = 0;
+								break;
+							case 500:
+								end3 = 0;
+								break;
+							default:
+								cout << endl << "請輸入0,500,1000,2000的金額!" << endl;
+								break;
+							}
+						}
+						end3 = 1;
+						mymoney -= mybet;
+						while (end3 == 1 || mybet > hebet) {
+							hebet = rand() % 5;
+							switch (hebet) {
+							case 4:
+								end3 = 0;
+								break;
+							case 2:
+								end3 = 0;
+								break;
+							case 1:
+								end3 = 0;
+								break;
+							default:
+								break;
+							}
+							hebet *= 500;
+						}
+						end3 = 1;
+						hemoney -= hebet;
+						sumbet += mybet + hebet;
+						cout << endl << "對手跟注: " << hebet << endl;
+					}
+					else if (poker[t] / 13 < poker[t + 5] / 13) {
+						while (end3 == 1 || mybet > hebet) {
+							cout << "對手獲得下注權! 對手決定下注金額為: ";
+							hebet = rand() % 5;
+							switch (hebet) {
+							case 4:
+								end3 = 0;
+								break;
+							case 2:
+								end3 = 0;
+								break;
+							case 1:
+								end3 = 0;
+								break;
+							default:
+								break;
+							}
+							hebet *= 500;
+						}
+						end3 = 1;
+						hemoney -= hebet;
+						cout << hebet << endl;
+						while (mybet < hebet) {
+							cout << "請決定是否跟注(若想放棄賭局，請輸入-1)，你決定跟注: ";
+							cin >> mybet;
+							if (mybet == -1) {
+								break;
+							}
+							else if (mybet < hebet) {
+								cout << endl << "跟注金額不可低於對手下注金額!";
+							}
+						}
+						mymoney -= mybet;
+						sumbet += hebet + mybet;
+						cout << endl;
+					}
+					else {
+						cout << "出bug了!" << endl;
+					}
+					cout << "目前賭注累計為: " << sumbet - mybet - hebet << " + " << mybet << " + " << hebet << " = " << sumbet << endl << "你尚有金額為: " << mymoney << " ，對手尚有金額為: " << hemoney << endl << endl;
+				}
 			}
-			cout << "}" << endl;
-			cout << "對手的牌為:" << endl << "{ " << "底牌" << "   ";
-			for (int ti = 6; ti < t + 6; ti++) {
-				cout << suit[poker[ti] / 13] << number[poker[ti] % 13] << " ";
-			}
-			cout << "}" << endl << endl;
-			if (t >= 1) {
-				if (poker[t] % 13 > poker[t + 5] % 13) {
-					cout << "你獲得下注權! 請決定下注金額為: " << endl << endl;
-				}
-				else if (poker[t] % 13 < poker[t + 5] % 13) {
-					cout << "對手獲得下注權! 對手決定下注金額為: " << endl << endl;
-				}
-				else if (poker[t] / 13 > poker[t + 5] / 13) {
-					cout << "你獲得下注權! 請決定下注金額為: " << endl << endl;
-				}
-				else if (poker[t] / 13 < poker[t + 5] / 13) {
-					cout << "對手獲得下注權!對手決定下注金額為: " << endl << endl;
-				}
-				else {
-					cout << "出bug了!" << endl << endl;
-				}
+			else {
+				cout << "你放棄了賭局!" << endl;
+				hemoney += sumbet;
+				end2 = 0;
+				cout << "你目前金額為: " << mymoney << " ， 對手金額為: " << hemoney << endl << endl;
+				break;
 			}
 		}
-		else {
-			cout << "你放棄了賭局!" << endl << endl;
-			break;
+		if (end2 == 1) {
+			cout << "你的牌為:" << endl << "{ "; //最終結果
+			for (int i = 0; i < 5; i++) {
+				cout << suit[poker[i] / 13] << number[poker[i] % 13] << " ";
+			}
+			cout << "}" << endl << "牌型為" << out[score] << endl << endl;
+
+
+			cout << "對手的牌為:" << endl << "{ ";
+			for (int i = 5; i < 10; i++) {
+				cout << suit[poker[i] / 13] << number[poker[i] % 13] << " ";
+			}
+			cout << "}" << endl << "牌型為" << out[score2] << endl << endl;
+
+			vord = SHOWDOWN(poker, score, score2);
+			if (vord == 0) {
+				cout << "你輸了賭局!" << endl;
+				hemoney += sumbet;
+				cout << "你目前金額為: " << mymoney << " ， 對手金額為: " << hemoney << endl;
+			}
+			else if (vord == 1) {
+				cout << "你贏了賭局!" << endl;
+				mymoney += sumbet;
+				cout << "你目前金額為: " << mymoney << " ， 對手金額為: " << hemoney << endl;
+			}
 		}
+
+		if (mymoney <= 0) {
+			cout << "你沒錢了!輸的一蹋糊塗!" << endl;
+			end == 1;
+		}
+		else if (hemoney <= 0) {
+			cout << "對手沒錢了!你賺到翻掉!" << endl;
+			end == 1;
+		}
+		sumbet = 0;
 	}
-
-
-
-
-
-
-
-
-
-
-
-	cout << "你的牌為:" << endl << "{ "; //最終結果
-	for (int i = 0; i < 5; i++) {
-		cout << suit[poker[i] / 13] << number[poker[i] % 13] << " ";
-	}
-	cout << "}" << endl << "牌型為" << out[score] << endl << endl;
-
-
-	cout << "對手的牌為:" << endl << "{ ";
-	for (int i = 5; i < 10; i++) {
-		cout << suit[poker[i] / 13] << number[poker[i] % 13] << " ";
-	}
-	cout << "}" << endl << "牌型為" << out[score2] << endl << endl;
-
-	SHOWDOWN(poker, score, score2);
-
 	system("PAUSE");
 	return 0;
 }
@@ -173,7 +351,7 @@ int OUT(int i, int j, int k) { //判斷牌型
 	return o;
 }
 
-void SHOWDOWN(int array[], int score, int score2) { //判斷勝負
+int SHOWDOWN(int array[], int score, int score2) { //判斷勝負
 
 	int number1 = 0, number2 = 0;
 	for (int i = 0; i < 5; i++)
@@ -187,36 +365,33 @@ void SHOWDOWN(int array[], int score, int score2) { //判斷勝負
 				number2 = array[i];
 
 	if (score > score2) { //比牌型
-		cout << "你獲勝了!" << endl << endl;
+		return 1;
 	}
 	else if (score < score2) {
-		cout << "對手獲勝!" << endl << endl;
+		return 0;
 	}
 	else if (number1 % 13 > number2 % 13) { //比對子數字
-		cout << "你獲勝了!" << endl << endl;
+		return 1;
 	}
 	else if (number1 % 13 < number2 % 13) {
-		cout << "對手獲勝!" << endl << endl;
+		return 0;
 	}
 	else if (number1 / 13 > number2 / 13) { //比對子花色
-		cout << "你獲勝了!" << endl << endl;
+		return 1;
 	}
 	else if (number1 / 13 < number2 / 13) {
-		cout << "對手獲勝!" << endl << endl;
+		return 0;
 	}
 	else if (array[0] % 13 > array[5] % 13) { //比單張數字
-		cout << "你獲勝了!" << endl << endl;
+		return 1;
 	}
 	else if (array[0] % 13 < array[5] % 13) {
-		cout << "對手獲勝!" << endl << endl;
+		return 0;
 	}
 	else if (array[0] / 13 > array[5] / 13) { //比單張花色
-		cout << "你獲勝了!" << endl << endl;
+		return 1;
 	}
 	else if (array[0] / 13 < array[5] / 13) {
-		cout << "對手獲勝!" << endl << endl;
-	}
-	else {
-		cout << "出bug了!" << endl;
+		return 0;
 	}
 }
